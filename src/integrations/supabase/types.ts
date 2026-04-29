@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      matunga_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          kind: string
+          player_color: string
+          player_id: string
+          room_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          kind: string
+          player_color: string
+          player_id: string
+          room_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          player_color?: string
+          player_id?: string
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matunga_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "matunga_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matunga_rooms: {
         Row: {
           board: Json
