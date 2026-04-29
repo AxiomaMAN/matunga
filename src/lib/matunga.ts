@@ -131,14 +131,16 @@ export const checkWinner = (board: Board, player: Player): boolean => {
     for (let c = 0; c < BOARD_SIZE; c++)
       if (board[r][c] === player) cells.push([r, c]);
 
-  // try every 4-combination
+  // Visual L: 3 collinear adjacent cells + 1 perpendicular at an endpoint.
+  // (Knight-connectivity intentionally omitted: knight cannot reach an adjacent
+  // square in one move, so requiring it would make the game unwinnable.)
   const n = cells.length;
   for (let a = 0; a < n; a++)
     for (let b = a + 1; b < n; b++)
       for (let c = b + 1; c < n; c++)
         for (let d = c + 1; d < n; d++) {
           const four = [cells[a], cells[b], cells[c], cells[d]];
-          if (isLShape(four) && isKnightConnected(four)) return true;
+          if (isLShape(four)) return true;
         }
   return false;
 };
