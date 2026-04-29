@@ -55,7 +55,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      join_matunga_room: {
+        Args: { _code: string; _player_id: string }
+        Returns: {
+          board: Json
+          code: string
+          created_at: string
+          id: string
+          player_black: string | null
+          player_white: string | null
+          turn: string
+          updated_at: string
+          winner: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "matunga_rooms"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never
