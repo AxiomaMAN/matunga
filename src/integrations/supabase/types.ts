@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      matunga_rooms: {
+        Row: {
+          board: Json
+          code: string
+          created_at: string
+          id: string
+          player_black: string | null
+          player_white: string | null
+          turn: string
+          updated_at: string
+          winner: string | null
+        }
+        Insert: {
+          board: Json
+          code: string
+          created_at?: string
+          id?: string
+          player_black?: string | null
+          player_white?: string | null
+          turn?: string
+          updated_at?: string
+          winner?: string | null
+        }
+        Update: {
+          board?: Json
+          code?: string
+          created_at?: string
+          id?: string
+          player_black?: string | null
+          player_white?: string | null
+          turn?: string
+          updated_at?: string
+          winner?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
