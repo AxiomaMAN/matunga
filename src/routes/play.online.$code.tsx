@@ -44,44 +44,23 @@ function OnlineRoom() {
   const [notFound, setNotFound] = useState(false);
   const playerId = getOrCreatePlayerId();
 
-  // initial fetch + join
+  // initial fetch + atomic join via RPC
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data, error } = await supabase
-        .from("matunga_rooms")
-        .select("*")
-        .eq("code", code)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("join_matunga_room", {
+        _code: code,
+        _player_id: playerId,
+      });
       if (cancelled) return;
       if (error || !data) {
+        console.error("[matunga] join error", error);
         setNotFound(true);
         setLoading(false);
         return;
       }
-      let r = data as unknown as RoomRow;
-
-      // join as black if seat is open and we're not already white
-      if (!r.player_white) {
-        const { data: upd } = await supabase
-          .from("matunga_rooms")
-          .update({ player_white: playerId })
-          .eq("id", r.id)
-          .is("player_white", null)
-          .select()
-          .maybeSingle();
-        if (upd) r = upd as unknown as RoomRow;
-      }
-      if (r.player_white !== playerId && !r.player_black) {
-        const { data: upd } = await supabase
-          .from("matunga_rooms")
-          .update({ player_black: playerId })
-          .eq("id", r.id)
-          .is("player_black", null)
-          .select()
-          .maybeSingle();
-        if (upd) r = upd as unknown as RoomRow;
-      }
+      // RPC returning a composite returns an object, but supabase-js may wrap it as array
+      const r = (Array.isArray(data) ? data[0] : data) as RoomRow;
       setRoom(r);
       setLoading(false);
     })();
@@ -89,6 +68,20 @@ function OnlineRoom() {
       cancelled = true;
     };
   }, [code, playerId]);
+
+  // safety polling: refetch every 3s in case realtime drops
+  useEffect(() => {
+    if (!room) return;
+    const i = setInterval(async () => {
+      const { data } = await supabase
+        .from("matunga_rooms")
+        .select("*")
+        .eq("id", room.id)
+        .maybeSingle();
+      if (data) setRoom(data as unknown as RoomRow);
+    }, 3000);
+    return () => clearInterval(i);
+  }, [room?.id]);
 
   // realtime subscription
   useEffect(() => {
