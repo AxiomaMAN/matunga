@@ -16,6 +16,7 @@ import {
 import { TurnCard } from "./play.local";
 import { toast } from "sonner";
 import { Copy } from "lucide-react";
+import { ChatBox } from "@/components/ChatBox";
 
 export const Route = createFileRoute("/play/online/$code")({
   head: ({ params }) => ({
@@ -179,6 +180,8 @@ function OnlineRoom() {
           )}
 
           <TurnCard turn={room.turn} winner={room.winner} />
+
+          <ChatBox roomId={room.id} myColor={myColor} myPlayerId={playerId} />
 
           {myColor && (
             <Button onClick={reset} variant="secondary" className="w-full">
