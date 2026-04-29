@@ -70,22 +70,6 @@ const knightDist = (a: [number, number], b: [number, number]) => {
   return (dr === 1 && dc === 2) || (dr === 2 && dc === 1);
 };
 
-const isKnightConnected = (cells: Array<[number, number]>) => {
-  // BFS on subgraph of 4 cells, edges where knight-distance applies
-  const visited = new Set<number>([0]);
-  const queue = [0];
-  while (queue.length) {
-    const i = queue.shift()!;
-    for (let j = 0; j < cells.length; j++) {
-      if (!visited.has(j) && knightDist(cells[i], cells[j])) {
-        visited.add(j);
-        queue.push(j);
-      }
-    }
-  }
-  return visited.size === cells.length;
-};
-
 const isLShape = (cells: Array<[number, number]>) => {
   if (cells.length !== 4) return false;
   // try every cell as "the foot" (the perpendicular one)
